@@ -15,17 +15,24 @@ export class News extends Component {
     category: PropTypes.string,
   }
 
-  constructor() {
-    super();
+  capitalize = (word) => {
+    const lower = word.toLowerCase();
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }
+
+  constructor(props) {
+    super(props);
     this.state = {
       articles: [],
       loading: false,
       page: 1
     }
+    document.title = `${this.capitalize(this.props.category)} - NewsMonkey`;
   }
 
-  async componentDidMount() {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=1&pageSize=${this.props.pageSize}`;
+
+  async updateNews() {
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     let data = await fetch(url);
     let parsedData = await data.json();
@@ -36,37 +43,33 @@ export class News extends Component {
         loading: false
       }
     )
+  }
+
+  async componentDidMount() {
+    this.updateNews();
 
   }
 
   handleNextClick = async () => {
-    console.log("Next");
-    //if(!this.state.page+1>Math.ceil(this.state.totalResults/this.props.pageSize)){}
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
-    this.setState({ loading: true });
-    let data = await fetch(url);
-    let parsedData = await data.json();
+    // console.log("Next");
+    // //if(!this.state.page+1>Math.ceil(this.state.totalResults/this.props.pageSize)){}
+    // let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=${this.state.page + 1}&pageSize=${this.props.pageSize}`;
+    // this.setState({ loading: true });
+    // let data = await fetch(url);
+    // let parsedData = await data.json();
 
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page + 1,
-      loading: false
-    })
-
+    // this.setState({
+    //   articles: parsedData.articles,
+    //   page: this.state.page + 1,
+    //   loading: false
+    // })
+    this.setState({ page: this.state.page + 1 });
+    this.updateNews();
 
   }
   handlePrevClick = async () => {
-    console.log("Prev");
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=${this.state.page - 1}&pageSize=${this.props.pageSize}`;
-    this.setState({ loading: true });
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    console.log(parsedData);
-    this.setState({
-      articles: parsedData.articles,
-      page: this.state.page - 1,
-      loading: false
-    })
+    this.setState({ page: this.state.page - 1 });
+    this.updateNews();
   }
 
   render() {
@@ -74,7 +77,7 @@ export class News extends Component {
     let x = "CVS digs into primary care with $9.5 bln Oak Street Health deal - Reuters";
     return (
       <div className="container my-3">
-        <h1 className="text-center" style={{margin:'35px 0px'}}>          NewsMonkey - Top Headlines        </h1>
+        <h1 className="text-center" style={{ margin: '35px 0px' ,marginTop: '90px' }}>          NewsMonkey - Top {this.capitalize(this.props.category)} Headlines     </h1>
         {this.state.loading && <Spinner />}
 
         <div className="row">
@@ -82,7 +85,7 @@ export class News extends Component {
 
             return element.title !== x && <div className="col-md-4" key={element.url}>
               <NewsItem title={element.title} description={element.description ? element.description : ""}
-                imageUrl={element.urlToImage} newsUrl={element.url} />
+                imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
             </div>
 
           })}
