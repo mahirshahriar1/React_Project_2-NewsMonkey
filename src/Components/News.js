@@ -47,7 +47,6 @@ export class News extends Component {
 
   async componentDidMount() {
     this.updateNews();
-
   }
 
   handleNextClick = async () => {
