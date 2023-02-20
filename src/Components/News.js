@@ -1,4 +1,4 @@
-import React,{ useEffect,useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import NewsItem from './NewsItem'
 import Spinner from './Spinner';
 import PropTypes from 'prop-types'
@@ -9,16 +9,16 @@ const News = (props) => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalResults, setTotalResults] = useState(0);
-   document.title = `${capitalize(props.category)} - NewsMonkey`;
 
   const capitalize = (word) => {
     const lower = word.toLowerCase();
     return lower.charAt(0).toUpperCase() + lower.slice(1);
   }
 
-  
 
-  const updateNews= async ()=> {
+
+
+  const updateNews = async () => {
     props.setProgress(10);
 
     let url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
@@ -30,62 +30,70 @@ const News = (props) => {
     setArticles(parsedData.articles);
     setTotalResults(parsedData.totalResults);
     setLoading(false);
-    
+
     props.setProgress(100);
   }
-  
-  useEffect(() => {
-    updateNews();  
-  }, [])
-  
 
-  
-   const fetchMoreData = async () => {         
-    setPage(page+1);   
-        
-    const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
-    let data = await fetch(url);
-    let parsedData = await data.json()
-    setArticles(articles.concat(parsedData.articles));
-    setTotalResults(parsedData.totalResults);
-   
+  useEffect(() => {
+    document.title = `${capitalize(props.category)} - NewsMonkey`;
+    updateNews();
+    // eslint-disable-next-line
+  }, [])
+
+  const fetchMoreData = async () => {
+    setPage(page + 1);
   };
 
+  useEffect(() => {
+    
+    async function fetchMyAPI() {
+      const url = `https://newsapi.org/v2/top-headlines?country=${props.country}&category=${props.category}&apiKey=${props.apiKey}&page=${page}&pageSize=${props.pageSize}`;
+      let data = await fetch(url);
+      let parsedData = await data.json()
+      setArticles(articles.concat(parsedData.articles));
+      setTotalResults(parsedData.totalResults);
+    }
+    fetchMyAPI();
+    // eslint-disable-next-line
+  }, [page]) 
 
 
 
 
-    let x = "CVS digs into primary care with $9.5 bln Oak Street Health deal - Reuters";
-    return (
-      <div >
-        <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>          NewsMonkey - Top {this.capitalize(props.category)} Headlines     </h1>
-        {loading && <Spinner />}
 
 
-        <InfiniteScroll
-          // style={{ overflow: 'none' }} css file check
-          dataLength={articles.length}
-          next={fetchMoreData}
-          hasMore={articles.length !== totalResults}
-          loader={<Spinner></Spinner>}
-        >
-          <div className="container">
 
-            <div className="row">
-              {articles.map((element) => {
-                return element.title !== x && <div className="col-md-4" key={element.url}>
-                  <NewsItem title={element.title} description={element.description ? element.description : ""}
-                    imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
-                </div>
-              })}
+  let x = "CVS digs into primary care with $9.5 bln Oak Street Health deal - Reuters";
+  return (
+    <div >
+      <h1 className="text-center" style={{ margin: '35px 0px', marginTop: '90px' }}>          NewsMonkey - Top {capitalize(props.category)} Headlines     </h1>
+      {loading && <Spinner />}
 
-            </div>
+
+      <InfiniteScroll
+        // style={{ overflow: 'none' }} css file check
+        dataLength={articles.length}
+        next={fetchMoreData}
+        hasMore={articles.length !== totalResults}
+        loader={<Spinner></Spinner>}
+      >
+        <div className="container">
+
+          <div className="row">
+            {articles.map((element) => {
+              return element.title !== x && <div className="col-md-4" key={element.url}>
+                <NewsItem title={element.title} description={element.description ? element.description : ""}
+                  imageUrl={element.urlToImage} newsUrl={element.url} author={element.author} date={element.publishedAt} source={element.source.name} />
+              </div>
+            })}
+
           </div>
-        </InfiniteScroll>
+        </div>
+      </InfiniteScroll>
 
-      </div>
-    )
-  
+    </div>
+  )
+
 }
 
 News.defaultProps = {
