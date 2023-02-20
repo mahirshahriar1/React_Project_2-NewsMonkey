@@ -4,6 +4,7 @@ import Spinner from './Spinner';
 import PropTypes from 'prop-types'
 import InfiniteScroll from "react-infinite-scroll-component";
 
+
 export class News extends Component {
   static defaultProps = {
     country: 'us',
@@ -35,11 +36,14 @@ export class News extends Component {
 
 
   async updateNews() {
-    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=0f51b049428342edb947651005b0bbd9&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+    this.props.setProgress(10);
+
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
 
     let data = await fetch(url);
+    this.props.setProgress(30);
     let parsedData = await data.json();
-
+    this.props.setProgress(50);
     this.setState(
       {
         articles: parsedData.articles,
@@ -48,6 +52,7 @@ export class News extends Component {
 
       }
     )
+    this.props.setProgress(100);
   }
 
   async componentDidMount() {
@@ -66,9 +71,9 @@ export class News extends Component {
 
          
     this.setState({ page: this.state.page + 1 });
-    await this.sleep(100);
-      
-    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=d093053d72bc40248998159804e0e67d&page=${this.state.page}&pageSize=${this.props.pageSize}`;
+      await this.sleep(100);
+        
+    const url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=${this.props.apiKey}&page=${this.state.page}&pageSize=${this.props.pageSize}`;
     let data = await fetch(url);
     let parsedData = await data.json()
     this.setState({
