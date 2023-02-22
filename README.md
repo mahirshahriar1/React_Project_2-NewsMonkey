@@ -4,10 +4,11 @@ npm i react-infinite-scroll-component
 
 npm i react-top-loading-bar
 
----------------
+**
 .env.local   
 REACT_APP_NEWS_API='0f51b049428342edb947651005b0bbd9'
--------------
+**
+
  const apiKey = "0f51b049428342edb947651005b0bbd9"
 
 # Getting Started with Create React App
