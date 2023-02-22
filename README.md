@@ -1,3 +1,7 @@
+npm install
+npm i react-infinite-scroll-component
+npm i react-top-loading-bar
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
